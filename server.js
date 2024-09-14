@@ -3,22 +3,29 @@ const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 const mongoose = require('mongoose');
+const cors = require('cors'); // Import cors
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const matchRoutes = require('./routes/matchRoutes');
 const chatRoutes = require('./routes/chatRoutes');
-const Chat = require('./models/Chat'); // Assuming you have a Chat model
+const Chat = require('./models/Chat');
 const connectDB = require('./config/db'); // Database connection
 
 // Initialize app and server
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketio(server, {
+  cors: {
+    origin: 'http://localhost:3000', // Your frontend URL
+    methods: ['GET', 'POST'],
+  }
+});
 
 // Connect to MongoDB
 connectDB();
 
-// Middleware for JSON parsing
+// Middleware
+app.use(cors()); // Add this line to enable CORS for express
 app.use(express.json());
 
 // API routes
@@ -31,7 +38,7 @@ app.use('/api/chats', chatRoutes);
 io.on('connection', (socket) => {
   console.log('New WS Connection...');
 
-  // Joining a room for a match
+  // Handle joining a room for a match
   socket.on('joinRoom', ({ matchId }) => {
     socket.join(matchId);
     console.log(`User joined room: ${matchId}`);
