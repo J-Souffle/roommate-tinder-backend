@@ -1,11 +1,11 @@
-// routes/authRoutes.js
+// authRoutes.js
 require('dotenv').config();
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const authMiddleware = require('../middleware/authMiddleware'); // Import the middleware
+const authMiddleware = require('../middleware/authMiddleware');
 
 // Register a new user
 router.post('/register', async (req, res) => {
@@ -81,16 +81,14 @@ router.post('/login', async (req, res) => {
   }
 
   try {
-    // Find the user by email
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: 'Invalid credentials' });
 
-    // Check password match
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ msg: 'Invalid credentials' });
 
     // Create and send JWT token
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '7d' });
     res.json({ token });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -137,7 +135,6 @@ router.get('/profile/:id', authMiddleware, async (req, res) => {
 
 // Test route to check if auth routes are working
 router.get('/test', (req, res) => {
-console.log('Test route hit');
   res.send('Auth route is working!');
 });
 
