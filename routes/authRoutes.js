@@ -1,3 +1,4 @@
+// routes/authRoutes.js
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
@@ -115,6 +116,21 @@ router.put('/profile', authMiddleware, async (req, res) => {
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+});
+
+// Get user profile by ID
+router.get('/profile/:id', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find the user by ID
+    const user = await User.findById(id).select('-password'); // Exclude password from response
+    if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 });
 
