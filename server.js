@@ -3,20 +3,20 @@ const express = require('express');
 const http = require('http');
 const socketio = require('socket.io');
 const mongoose = require('mongoose');
-const cors = require('cors'); // Import cors
+const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const matchRoutes = require('./routes/matchRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const Chat = require('./models/Chat');
-const connectDB = require('./config/db'); // Database connection
+const connectDB = require('./config/db');
 
 // Initialize app and server
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server, {
   cors: {
-    origin: 'http://localhost:3000', // Your frontend URL
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
   }
 });
@@ -25,7 +25,7 @@ const io = socketio(server, {
 connectDB();
 
 // Middleware
-app.use(cors()); // Add this line to enable CORS for express
+app.use(cors());
 app.use(express.json());
 
 // API routes
@@ -38,31 +38,40 @@ app.use('/api/chats', chatRoutes);
 io.on('connection', (socket) => {
   console.log('New WS Connection...');
 
-  // Handle joining a room for a match
-  socket.on('joinRoom', ({ matchId }) => {
+  socket.on('joinRoom', ({ matchId, userId }) => {
+    if (!matchId || !userId) {
+      console.error('Missing required fields: matchId and userId');
+      return;
+    }
     socket.join(matchId);
-    console.log(`User joined room: ${matchId}`);
+    console.log(`User ${userId} joined room: ${matchId}`);
   });
 
-  // Handle chat messages
   socket.on('chatMessage', async ({ matchId, message, userId }) => {
+    if (!matchId || !message || !userId) {
+      console.error('Missing required fields: matchId, message, and userId');
+      return;
+    }
+
     try {
-      // Create a new chat message
       const chat = new Chat({
         matchId,
         sender: userId,
         message,
       });
 
-      // Save the chat message to the database
       await chat.save();
-
-      // Emit the new message to all users in the room
       io.to(matchId).emit('message', chat);
     } catch (error) {
       console.error('Error saving chat message:', error);
     }
   });
+});
+
+// Error handler
+app.use((err, req, res, next) => {
+  console.error('Server Error:', err);
+  res.status(500).send('Server Error');
 });
 
 // Start the server
