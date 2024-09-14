@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const User = require('../models/User');
-const authMiddleware = require('../middleware/authMiddleware'); // Import the middleware
+const authMiddleware = require('../middleware/authMiddleware');
+const { getPotentialRoommates } = require('../utils/roommateUtils'); // Import the function
 
 // Get all users (for admin use or similar purpose)
 router.get('/', authMiddleware, async (req, res) => {
@@ -27,6 +28,18 @@ router.get('/:id', authMiddleware, async (req, res) => {
   }
 });
 
+// Get roommate suggestions for a user
+router.get('/:id/roommates', authMiddleware, async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const potentialRoommates = await getPotentialRoommates(id);
+    res.json(potentialRoommates);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Update a user by ID
 router.put('/:id', authMiddleware, async (req, res) => {
   const { id } = req.params;
@@ -40,6 +53,11 @@ router.put('/:id', authMiddleware, async (req, res) => {
     );
 
     if (!user) return res.status(404).json({ msg: 'User not found' });
+
+    // Optionally update roommate suggestions here
+    const potentialRoommates = await getPotentialRoommates(id);
+    user.roommateSuggestions = potentialRoommates.map(roommate => roommate._id);
+    await user.save();
 
     res.json({
       msg: 'User profile updated successfully!',

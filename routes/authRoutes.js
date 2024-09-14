@@ -136,6 +136,7 @@ router.get('/profile/:id', authMiddleware, async (req, res) => {
 
 // Test route to check if auth routes are working
 router.get('/test', (req, res) => {
+console.log('Test route hit');
   res.send('Auth route is working!');
 });
 
