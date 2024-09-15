@@ -4,19 +4,19 @@ const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
-  pets: { type: String },
-  occupation: { type: String },
-  rentPriceRange: { type: String },
-  smoker: { type: Boolean },
-  socialLife: { type: String },
-  sleepSchedule: { type: String },
-  areaPreference: { type: String },
+  age: { type: Number },
+  budget: { type: Number },
+  housePreference: { type: String },
+  city: { type: String },
+  state: { type: String },
+  bio: { type: String },
+  isSmokingOk: { type: String },
+  arePetsOk: { type: String },
+  sleepTime: { type: String },
   moveInDate: { type: Date },
-  houseType: { type: String },
-  leaseDuration: { type: String },
-  cleanlinessLevel: { type: String },
-  workSchedule: { type: String },
-  favoriteHomes: { type: [String] } // Array of home IDs or similar
+  occupation: { type: String },
+  profilePicture: { type: String }, // Field to store the URL/path of the profile picture
+  favoriteHomes: { type: [String] }
 });
 
 module.exports = mongoose.model('User', userSchema);
