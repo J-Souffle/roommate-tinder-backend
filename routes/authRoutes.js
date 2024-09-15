@@ -8,8 +8,72 @@ const bcrypt = require('bcryptjs');
 const authMiddleware = require('../middleware/authMiddleware');
 
 // Register a new user
+// router.post('/register', async (req, res) => {
+//   const { name, email, password, pets, occupation, rentPriceRange, smoker, socialLife, sleepSchedule, areaPreference, moveInDate, houseType, leaseDuration, cleanlinessLevel, workSchedule, favoriteHomes } = req.body;
+
+//   if (!name || !email || !password) {
+//     return res.status(400).json({ msg: 'Please provide all required fields' });
+//   }
+
+//   try {
+//     // Check if user already exists
+//     const existingUser = await User.findOne({ email });
+//     if (existingUser) return res.status(400).json({ msg: 'User already exists' });
+
+//     // Hash the password
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     // Create a new user
+//     const user = new User({
+//       name,
+//       email,
+//       password: hashedPassword,
+//       pets,
+//       occupation,
+//       rentPriceRange,
+//       smoker,
+//       socialLife,
+//       sleepSchedule,
+//       areaPreference,
+//       moveInDate,
+//       houseType,
+//       leaseDuration,
+//       cleanlinessLevel,
+//       workSchedule,
+//       favoriteHomes
+//     });
+
+//     // Save user to the database
+//     await user.save();
+
+//     // Send response with user info (excluding actual password)
+//     res.status(201).json({
+//       msg: 'User registered successfully!',
+//       user: {
+//         name,
+//         email,
+//         pets,
+//         occupation,
+//         rentPriceRange,
+//         smoker,
+//         socialLife,
+//         sleepSchedule,
+//         areaPreference,
+//         moveInDate,
+//         houseType,
+//         leaseDuration,
+//         cleanlinessLevel,
+//         workSchedule,
+//         favoriteHomes
+//       }
+//     });
+//   } catch (error) {
+//     res.status(400).json({ error: error.message });
+//   }
+// });
+
 router.post('/register', async (req, res) => {
-  const { name, email, password, pets, occupation, rentPriceRange, smoker, socialLife, sleepSchedule, areaPreference, moveInDate, houseType, leaseDuration, cleanlinessLevel, workSchedule, favoriteHomes } = req.body;
+  const { name, email, password } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ msg: 'Please provide all required fields' });
@@ -28,19 +92,6 @@ router.post('/register', async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      pets,
-      occupation,
-      rentPriceRange,
-      smoker,
-      socialLife,
-      sleepSchedule,
-      areaPreference,
-      moveInDate,
-      houseType,
-      leaseDuration,
-      cleanlinessLevel,
-      workSchedule,
-      favoriteHomes
     });
 
     // Save user to the database
@@ -52,20 +103,7 @@ router.post('/register', async (req, res) => {
       user: {
         name,
         email,
-        pets,
-        occupation,
-        rentPriceRange,
-        smoker,
-        socialLife,
-        sleepSchedule,
-        areaPreference,
-        moveInDate,
-        houseType,
-        leaseDuration,
-        cleanlinessLevel,
-        workSchedule,
-        favoriteHomes
-      }
+      },
     });
   } catch (error) {
     res.status(400).json({ error: error.message });
