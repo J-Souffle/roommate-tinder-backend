@@ -4,7 +4,7 @@ import axios from 'axios';
 const getAuthToken = () => localStorage.getItem('authToken');
 
 const apiService = axios.create({
-  baseURL: 'http://localhost:5000/api', // Adjust the base URL as needed
+  baseURL: process.env.REACT_APP_API_BASE_URL || 'http://localhost:5000/api',
   headers: {
     'Content-Type': 'application/json',
   }
