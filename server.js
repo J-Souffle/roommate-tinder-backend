@@ -8,6 +8,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const matchRoutes = require('./routes/matchRoutes');
 const chatRoutes = require('./routes/chatRoutes');
+const housesRoutes = require('./routes/housesRoutes');
 const Chat = require('./models/Chat');
 const connectDB = require('./config/db');
 
@@ -33,6 +34,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/matches', matchRoutes);
 app.use('/api/chats', chatRoutes);
+app.use('/api/houses', housesRoutes); // Add the houses routes here
+
 
 // Socket.io connection handling
 io.on('connection', (socket) => {
